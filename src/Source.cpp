@@ -2,7 +2,7 @@
 
 int main()
 {
-	MovingWindow window(1920, 1080, "Pathfinder Visualisation", 144);
+	MovingWindow window(1920, 1080, "Pathfinder Visualisation", 1000);
 	window.run();
 
 	return 0;

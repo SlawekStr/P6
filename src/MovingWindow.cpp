@@ -6,14 +6,11 @@
 MovingWindow::MovingWindow(unsigned windowWidth, unsigned windowHeight, std::string windowTitle, unsigned framerate) 
 	: Window{windowWidth,windowHeight,windowTitle,framerate}, m_camera{ m_window }
 {
-	// Create grids
-	for (int i = 0; i < 100; i++)
-	{
-		for (int j = 0; j < 100; j++)
-		{
-			m_gridManager.addMesh(sf::Vector2f(20.0f * i, 20.0f * j), sf::Vector2i(10, 10), 1);
-		}
-	}
+	m_gridManager.addMesh(sf::Vector2f(static_cast<float>(((m_meshSize.x + 10) * m_squareSize) * 0), 750.0f), m_meshSize, m_squareSize, SolverType::DFS);
+	m_gridManager.addMesh(sf::Vector2f(static_cast<float>(((m_meshSize.x + 10) * m_squareSize) * 1), 750.0f), m_meshSize, m_squareSize, SolverType::BFS);
+	m_gridManager.addMesh(sf::Vector2f(static_cast<float>(((m_meshSize.x + 10) * m_squareSize) * 2), 750.0f), m_meshSize, m_squareSize, SolverType::DJIKSTRA);
+	m_gridManager.addMesh(sf::Vector2f(static_cast<float>(((m_meshSize.x + 10) * m_squareSize) * 3), 750.0f), m_meshSize, m_squareSize, SolverType::ASTAR);
+	m_gridManager.addMesh(sf::Vector2f(static_cast<float>(((m_meshSize.x + 10) * m_squareSize) * 1.5), 0.0f), m_meshSize, m_squareSize);
 }
 
 ////////////////////////////////////////////////////////////
@@ -24,7 +21,10 @@ void MovingWindow::run()
 	{
 		t.start();
 		pollEvent();
-		update();
+		if (!m_isPaused)
+		{
+			update();
+		}
 		m_window.clear(sf::Color(128, 128, 128));
 		draw();
 		m_window.display();
@@ -64,20 +64,103 @@ void MovingWindow::pollEvent()
 				{
 					m_gridManager.switchLines();
 				}
+				else if (e.key.code == sf::Keyboard::D)
+				{
+					m_gridManager.switchWeights();
+				}
+				else if (e.key.code == sf::Keyboard::C)
+				{
+					m_gridManager.copyTemplateMesh();
+				}
+				else if (e.key.code == sf::Keyboard::P)
+				{
+					m_isPaused = !m_isPaused;
+				}
+				else if (e.key.code == sf::Keyboard::M)
+				{
+					m_isEditing = !m_isEditing;
+				}
+				else if (e.key.code == sf::Keyboard::Up)
+				{
+					m_brushSize.y++;
+				}
+				else if (e.key.code == sf::Keyboard::Down)
+				{
+					m_brushSize.y--;
+					if (m_brushSize.y <= 0)
+					{
+						m_brushSize.y = 1;
+					}
+				}
+				else if (e.key.code == sf::Keyboard::Right)
+				{
+					m_brushSize.x++;
+				}
+				else if (e.key.code == sf::Keyboard::Left)
+				{
+					m_brushSize.x--;
+					if (m_brushSize.x <= 0)
+					{
+						m_brushSize.x = 1;
+					}
+				}
 				break;
 			}
 			case sf::Event::MouseButtonPressed:
 			{
 				if (e.key.code == sf::Mouse::Button::Left)
 				{
-					m_gridManager.addMesh(m_window.mapPixelToCoords(sf::Mouse::getPosition(m_window)), sf::Vector2i(5, 10), 5);
+					m_squareSpawnType = SquareType::FULL;
+					m_isSpawning = true;
 				}
 				else if (e.key.code == sf::Mouse::Button::Right)
 				{
-					m_gridManager.handleMouseClick(m_window.mapPixelToCoords(sf::Mouse::getPosition(m_window)));
+					m_squareSpawnType = SquareType::EMPTY;
+					m_isSpawning = true;
 				}
 				break;
 			}
+			case sf::Event::MouseButtonReleased:
+			{
+				if (e.key.code == sf::Mouse::Button::Left)
+				{
+					m_isSpawning = false;
+				}
+				else if (e.key.code == sf::Mouse::Button::Right)
+				{
+					m_isSpawning = false;
+				}
+				break;
+			}
+		}
+	}
+	if (m_isSpawning)
+	{
+		sf::Vector2f mousePos = m_window.mapPixelToCoords(sf::Mouse::getPosition(m_window));
+		for (int i = 0; i < m_brushSize.x; ++i)
+		{
+			float mousePosY = mousePos.y;
+			for (int j = 0; j < m_brushSize.y; ++j)
+			{
+				if (m_isEditing)
+				{
+					m_gridManager.setSquareType(mousePos, m_squareSpawnType);
+				}
+				else
+				{
+					if (sf::Mouse::isButtonPressed(sf::Mouse::Left))
+					{
+						m_gridManager.changeSquareWeight(mousePos, true);
+					}
+					else if (sf::Mouse::isButtonPressed(sf::Mouse::Right))
+					{
+						m_gridManager.changeSquareWeight(mousePos, false);
+					}
+				}
+				mousePos.y += m_squareSize;
+			}
+			mousePos.x += m_squareSize;
+			mousePos.y = mousePosY;
 		}
 	}
 }
@@ -85,6 +168,7 @@ void MovingWindow::pollEvent()
 ////////////////////////////////////////////////////////////
 void MovingWindow::update()
 {
+	m_gridManager.update();
 }
 
 ////////////////////////////////////////////////////////////

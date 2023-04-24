@@ -35,6 +35,14 @@ private:
 	/// </summary>
 	void draw() override;
 private:
-	Camera m_camera;			//!< Handles camera movement and zooming
-	GridManager m_gridManager;	//!< Manager for the grids
+	Camera m_camera;									//!< Handles camera movement and zooming
+	GridManager m_gridManager;							//!< Manager for the grids
+	bool m_isPaused{ true };							//!< Block update flag
+	bool m_isSpawning{ false };							//!< Block activation flag
+	bool m_isEditing{ true };							//!< Edit/Modify mode
+	// Mesh settings
+	SquareType m_squareSpawnType{ SquareType::EMPTY };	//!< Type of square to spawn
+	sf::Vector2i m_brushSize{ 1,1 };					//!< Size of brush to draw 
+	sf::Vector2i m_meshSize{ 50,50 };					//!< Size of mesh
+	int m_squareSize{ 10 };								//!< Size of each square in mesh
 };
