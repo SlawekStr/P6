@@ -10,20 +10,27 @@ The Pathfinder Visualization project is an interactive tool that provides a visu
 |**Mouse Wheel**|Zooming In/Out|  
 |**Esc**|Close window|  
 
+# Visualization Controls
+
+|Event|Action|  
+|---|---|  
+|**Z**|Turn On/Off square drawing|  
+|**X**|Turn On/Off lines drawing|  
+|**D**|Turn On/Off cell weights drawing|  
+
 # Simulation Controls
 
 |Event|Action|  
 |---|---|  
 |**Escape**|Close window|  
-|**W**|Increase amplitude|  
-|**S**|Decrease amplitude|  
-|**A**|Decrease period|  
-|**D**|Increase period|  
-|**ADD**|Increase fps|  
-|**SUBTRACT**|Decrease fps|  
-|**UP**|Increase ball radius|  
-|**DOWN**|Decrease ball radius|  
-|**LEFT**|Decrease interval between each generated point|  
-|**RIGHT**|Increase interval between each generated point|  
-|**T**|Change visualistion mode|  
-|**F**|Change current function that is visualised|  
+|**P**|Turn On/Off pause|  
+|**C**|Copy Cells from scratchpad|  
+|**M**|Switch between drawing walls/modifying weights|  
+|**S**|Spawn Start point|  
+|**E**|Spawn End point|
+|**G**|Generate maze on scratchpad|
+|**UP/DOWN**|Dec/Increase brush size horizontally|
+|**LEFT/RIGHT**|Dec/Increase brush size vertically|
+|**MOUSE LEFT**|Spawn wall/ Increase cell weight (depend on mode)|
+|**MOUSE RIGHT**|Despawn wall/ Decrease cell weight (depend on mode)|
+
