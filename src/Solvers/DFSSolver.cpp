@@ -10,9 +10,14 @@ DFSSolver::DFSSolver(Mesh* mesh) : MeshSolver(mesh)
 ////////////////////////////////////////////////////////////
 void DFSSolver::reset()
 {
+	resetStartPosition();
+	resetSolver();
+}
+
+void DFSSolver::resetStartPosition()
+{
 	m_cellContainer = std::stack<int>();
 	m_cellContainer.push(m_mesh->getStartPosition());
-	resetSolver();
 }
 
 ////////////////////////////////////////////////////////////

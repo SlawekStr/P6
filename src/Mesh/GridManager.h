@@ -3,6 +3,7 @@
 #include <memory>
 #include "Mesh.h"
 #include "src/Solvers/MeshSolver.h"
+#include "src/MazeGenerators/MazeGenerator.h"
 
 /// <summary>
 /// The GridManager class manages a collection of Mesh objects and provides methods for drawing and adding meshes,
@@ -78,6 +79,7 @@ private:
 private:
 	std::list<Mesh> m_meshVec;							//!< The vector of Mesh objects managed by the GridManager.
 	std::vector<std::unique_ptr<MeshSolver>> m_solvers; //!< The vector of mesh solvers (pathfinders)
+	std::unique_ptr<MazeGenerator> m_mazeGenerator;		//!< Maze generator
 	bool drawSquares{ true };							//!< A flag indicating whether to draw squares or not.
 	bool drawLines{ true };								//!< A flag indicating whether to draw lines or not.
 	bool drawWeights{ true };							//!< A flag indicating whether to draw cell weights or not

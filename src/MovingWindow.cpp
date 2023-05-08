@@ -52,57 +52,102 @@ void MovingWindow::pollEvent()
 			}
 			case sf::Event::KeyPressed:
 			{
-				if (e.key.code == sf::Keyboard::Escape)
+				switch (e.key.code)
 				{
-					m_window.close();
-				}
-				else if (e.key.code == sf::Keyboard::Z)
-				{
-					m_gridManager.switchSquares();
-				}
-				else if (e.key.code == sf::Keyboard::X)
-				{
-					m_gridManager.switchLines();
-				}
-				else if (e.key.code == sf::Keyboard::D)
-				{
-					m_gridManager.switchWeights();
-				}
-				else if (e.key.code == sf::Keyboard::C)
-				{
-					m_gridManager.copyTemplateMesh();
-				}
-				else if (e.key.code == sf::Keyboard::P)
-				{
-					m_isPaused = !m_isPaused;
-				}
-				else if (e.key.code == sf::Keyboard::M)
-				{
-					m_isEditing = !m_isEditing;
-				}
-				else if (e.key.code == sf::Keyboard::Up)
-				{
-					m_brushSize.y++;
-				}
-				else if (e.key.code == sf::Keyboard::Down)
-				{
-					m_brushSize.y--;
-					if (m_brushSize.y <= 0)
+					case sf::Keyboard::Escape:
 					{
-						m_brushSize.y = 1;
+						m_window.close();
+						break;
 					}
-				}
-				else if (e.key.code == sf::Keyboard::Right)
-				{
-					m_brushSize.x++;
-				}
-				else if (e.key.code == sf::Keyboard::Left)
-				{
-					m_brushSize.x--;
-					if (m_brushSize.x <= 0)
+					case sf::Keyboard::Z:
 					{
-						m_brushSize.x = 1;
+						m_gridManager.switchSquares();
+						break;
 					}
+					case sf::Keyboard::X:
+					{
+						m_gridManager.switchLines();
+						break;
+					}
+					case sf::Keyboard::D:
+					{
+						m_gridManager.switchWeights();
+						break;
+					}
+					case sf::Keyboard::C:
+					{
+						m_gridManager.copyTemplateMesh();
+						break;
+					}
+					case sf::Keyboard::P:
+					{
+						m_isPaused = !m_isPaused;
+						break;
+					}
+					case sf::Keyboard::M:
+					{
+						m_isEditing = !m_isEditing;
+						break;
+					}
+					case sf::Keyboard::S:
+					{
+						m_squareSpawnType = SquareType::START;
+						m_isSpawning = true;
+						break;
+					}
+					case sf::Keyboard::E:
+					{
+						m_squareSpawnType = SquareType::FINISH;
+						m_isSpawning = true;
+						break;
+					}
+					case sf::Keyboard::G:
+					{
+						m_gridManager.generateMaze();
+						break;
+					}
+					case sf::Keyboard::Up:
+					{
+						m_brushSize.y++;
+						break;
+					}
+					case sf::Keyboard::Down:
+					{
+						m_brushSize.y--;
+						if (m_brushSize.y <= 0)
+						{
+							m_brushSize.y = 1;
+						}
+						break;
+					}
+					case sf::Keyboard::Right:
+					{
+						m_brushSize.x++;
+						break;
+					}
+					case sf::Keyboard::Left:
+					{
+						m_brushSize.x--;
+						if (m_brushSize.x <= 0)
+						{
+							m_brushSize.x = 1;
+						}
+						break;
+					}
+					default:
+						break;
+					}
+				break;
+			}
+			case sf::Event::KeyReleased:
+			{
+				if (e.key.code == sf::Keyboard::S)
+				{
+					m_isSpawning = false;
+				}
+				else if (e.key.code == sf::Keyboard::E)
+				{
+					m_isSpawning = false;
 				}
 				break;
 			}
@@ -137,30 +182,38 @@ void MovingWindow::pollEvent()
 	if (m_isSpawning)
 	{
 		sf::Vector2f mousePos = m_window.mapPixelToCoords(sf::Mouse::getPosition(m_window));
-		for (int i = 0; i < m_brushSize.x; ++i)
+
+		if (m_squareSpawnType == SquareType::START || m_squareSpawnType == SquareType::FINISH)
 		{
-			float mousePosY = mousePos.y;
-			for (int j = 0; j < m_brushSize.y; ++j)
+			m_gridManager.setSquareType(mousePos, m_squareSpawnType);
+		}
+		else
+		{
+			for (int i = 0; i < m_brushSize.x; ++i)
 			{
-				if (m_isEditing)
+				float mousePosY = mousePos.y;
+				for (int j = 0; j < m_brushSize.y; ++j)
 				{
-					m_gridManager.setSquareType(mousePos, m_squareSpawnType);
-				}
-				else
-				{
-					if (sf::Mouse::isButtonPressed(sf::Mouse::Left))
+					if (m_isEditing)
 					{
-						m_gridManager.changeSquareWeight(mousePos, true);
+						m_gridManager.setSquareType(mousePos, m_squareSpawnType);
 					}
-					else if (sf::Mouse::isButtonPressed(sf::Mouse::Right))
+					else
 					{
-						m_gridManager.changeSquareWeight(mousePos, false);
+						if (sf::Mouse::isButtonPressed(sf::Mouse::Left))
+						{
+							m_gridManager.changeSquareWeight(mousePos, true);
+						}
+						else if (sf::Mouse::isButtonPressed(sf::Mouse::Right))
+						{
+							m_gridManager.changeSquareWeight(mousePos, false);
+						}
 					}
+					mousePos.y += m_squareSize;
 				}
-				mousePos.y += m_squareSize;
+				mousePos.x += m_squareSize;
+				mousePos.y = mousePosY;
 			}
-			mousePos.x += m_squareSize;
-			mousePos.y = mousePosY;
 		}
 	}
 }

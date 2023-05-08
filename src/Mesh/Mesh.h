@@ -85,6 +85,10 @@ public:
 	/// </summary>
 	void resetMesh();
 	/// <summary>
+	/// Restore mesh to its initial state
+	/// </summary>
+	void clearMesh();
+	/// <summary>
 	/// Change color of a cell with index
 	/// </summary>
 	/// <param name="sqType">New type of cell</param>

@@ -42,6 +42,12 @@
     <ClCompile Include="src\Solvers\AStarSolver.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\MazeGenerators\RandomFillGenerator.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\MazeGenerators\RecursiveDivisionGenerator.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\MovingWindow.h">
@@ -81,6 +87,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\MazeGenerators\MazeGenerator.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\MazeGenerators\RecursiveDivisionGenerator.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

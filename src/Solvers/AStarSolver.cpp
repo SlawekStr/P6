@@ -13,7 +13,7 @@
 float heuristicFunction(float x1, float y1, float x2, float y2, float weight) {
 	float dx = x2 - x1;
 	float dy = y2 - y1;
-	return std::sqrt(dx * dx + dy * dy) * (1 + weight);
+	return std::sqrt(dx * dx + dy * dy) * (10 * weight);
 }
 
 ////////////////////////////////////////////////////////////
@@ -25,9 +25,14 @@ AStarSolver::AStarSolver(Mesh* mesh) : MeshSolver(mesh)
 ////////////////////////////////////////////////////////////
 void AStarSolver::reset()
 {
+	resetStartPosition();
+	resetSolver();
+}
+
+void AStarSolver::resetStartPosition()
+{
 	m_cellContainer = pairPrioQueue();
 	m_cellContainer.push({ m_mesh->getStartPosition(),0.0f });
-	resetSolver();
 }
 
 ////////////////////////////////////////////////////////////
@@ -36,8 +41,8 @@ void AStarSolver::updateSolver()
 	sf::Vector2i meshSize = m_mesh->getMeshSize();
 	std::vector<Cell>& cellVec = m_mesh->getSquareVec();
 	auto [topIndex, euWeight] = m_cellContainer.top();
+	auto [finishX, finishY] = mapIndex2D(m_mesh->getFinishPosition(), meshSize.x);
 	m_cellContainer.pop();
-
 	m_squareProcessed++;
 	auto [row, column] = mapIndex2D(topIndex, meshSize.x);
 	for (int i = -1; i <= 1; i++)
@@ -66,7 +71,7 @@ void AStarSolver::updateSolver()
 				cellVec[nextIndex].distance = cellVec[topIndex].distance + cellVec[nextIndex].weight;
 				m_mesh->setCellColor(SquareType::QUEUED, nextIndex);
 
-				m_cellContainer.push({ nextIndex,heuristicFunction(float(column + j), float(row + i), float(meshSize.x),float(meshSize.y),float(cellVec[nextIndex].weight))});
+				m_cellContainer.push({ nextIndex,heuristicFunction(float(column + j), float(row + i), float(finishY),float(finishX),float(cellVec[nextIndex].weight))});
 			}
 		}
 		if (m_isFound)
@@ -121,7 +126,8 @@ void AStarSolver::updatePath()
 				continue;
 			}
 			int nextIndex = mapIndex1D(row + i, column + j, meshSize.x);
-			if (cellVec[nextIndex].distance < minDistance)
+
+			if ((cellVec[nextIndex].cellType == SquareType::PROCESSED || cellVec[nextIndex].cellType == SquareType::START) && cellVec[nextIndex].distance < minDistance)
 			{
 				cellIndex = nextIndex;
 				minDistance = cellVec[nextIndex].distance;

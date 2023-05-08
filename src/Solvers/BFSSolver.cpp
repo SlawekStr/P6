@@ -10,9 +10,14 @@ BFSSolver::BFSSolver(Mesh* mesh) : MeshSolver(mesh)
 ////////////////////////////////////////////////////////////
 void BFSSolver::reset()
 {
+	resetStartPosition();
+	resetSolver();
+}
+
+void BFSSolver::resetStartPosition()
+{
 	m_cellContainer = std::queue<int>();
 	m_cellContainer.push(m_mesh->getStartPosition());
-	resetSolver();
 }
 
 ////////////////////////////////////////////////////////////

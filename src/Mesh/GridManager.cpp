@@ -1,9 +1,12 @@
 #include "GridManager.h"
 #include <iostream>
+#include <random>
 #include "src/Solvers/DFSSolver.h"
 #include "src/Solvers/BFSSolver.h"
 #include "src/Solvers/DjikstraSolver.h"
 #include "src/Solvers/AStarSolver.h"
+#include "src/MazeGenerators/RandomFillGenerator.h"
+#include "src/MazeGenerators/RecursiveDivisionGenerator.h"
 
 ////////////////////////////////////////////////////////////
 GridManager::GridManager()
@@ -76,6 +79,10 @@ void GridManager::setSquareType(sf::Vector2f mousePos, SquareType squareType)
 			it->setCellType(mousePos, squareType);
 			if (it != std::prev(m_meshVec.end()))
 			{
+				if (squareType == SquareType::START || squareType == SquareType::FINISH)
+				{
+					m_solvers[index]->resetStartPosition();
+				}
 				clearMesh(index);
 			}
 			return;
@@ -119,6 +126,7 @@ void GridManager::copyTemplateMesh()
 	{
 		it->copyMesh(mesh);
 		clearMesh(index);
+		m_solvers[index]->resetStartPosition();
 		index++;
 	}
 }
@@ -126,6 +134,10 @@ void GridManager::copyTemplateMesh()
 ////////////////////////////////////////////////////////////
 void GridManager::update()
 {
+	if (m_mazeGenerator)
+	{
+		m_mazeGenerator->updateGenerator();
+	}
 	for (auto& solver : m_solvers)
 	{
 		solver->update();
@@ -135,7 +147,26 @@ void GridManager::update()
 ////////////////////////////////////////////////////////////
 void GridManager::generateMaze()
 {
+	// Generate random maze generator
+	std::random_device rd;
+	std::mt19937 rng(rd());
+	const int MIN_RANGE = 0;
+	const int MAX_RANGE = 1;
+	std::uniform_int_distribution<int> uni(MIN_RANGE, MAX_RANGE);
 
+	// Reset mesh to its inital state
+	m_meshVec.back().clearMesh();
+	// Pick random maze generator
+	int mazeIndex = uni(rng);
+	switch (mazeIndex)
+	{
+	case 0:
+		m_mazeGenerator = std::make_unique<RandomFillGenerator>(&m_meshVec.back());
+		break;
+	case 1:
+		m_mazeGenerator = std::make_unique< RecursiveDivisionGenerator>(&m_meshVec.back());
+		break;
+	}
 }
 
 ////////////////////////////////////////////////////////////
@@ -143,10 +174,9 @@ void GridManager::clearMesh(int index)
 {
 	if (!m_solvers[index]->isClear())
 	{
-		m_solvers[index]->reset();
-
 		auto it = m_meshVec.begin();
 		std::advance(it, index);
 		it->resetMesh();
+		m_solvers[index]->reset();
 	}
 }

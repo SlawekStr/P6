@@ -142,6 +142,8 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="src\Camera.cpp" />
+    <ClCompile Include="src\MazeGenerators\RandomFillGenerator.cpp" />
+    <ClCompile Include="src\MazeGenerators\RecursiveDivisionGenerator.cpp" />
     <ClCompile Include="src\Mesh\GridManager.cpp" />
     <ClCompile Include="src\Mesh\Mesh.cpp" />
     <ClCompile Include="src\MovingWindow.cpp" />
@@ -155,6 +157,7 @@
     <ClInclude Include="src\Camera.h" />
     <ClInclude Include="src\MazeGenerators\MazeGenerator.h" />
     <ClInclude Include="src\MazeGenerators\RandomFillGenerator.h" />
+    <ClInclude Include="src\MazeGenerators\RecursiveDivisionGenerator.h" />
     <ClInclude Include="src\Mesh\GridManager.h" />
     <ClInclude Include="src\Mesh\Mesh.h" />
     <ClInclude Include="src\MovingWindow.h" />

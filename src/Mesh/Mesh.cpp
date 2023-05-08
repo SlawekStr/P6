@@ -153,10 +153,38 @@ void Mesh::setCellType(sf::Vector2f mousePos, SquareType squareType)
 	if (index >= 0 && index < m_squareVec.size())
 	{
 		SquareType modifiedSquareType = m_squareVec[index].cellType;
+
 		if (modifiedSquareType != SquareType::START && modifiedSquareType != SquareType::FINISH)
 		{
-			m_squareVec[index].cellType = squareType;
-			setCellColor(squareType, index);
+			if (squareType == SquareType::START)
+			{
+				// Reset current start cell
+				m_squareVec[m_startIndex].cellType = SquareType::EMPTY;
+				m_squareVec[m_startIndex].distance = std::numeric_limits<int>::max();
+				setCellColor(SquareType::EMPTY, m_startIndex);
+				// Reset new start cell
+				m_squareVec[index].cellType = SquareType::START;
+				m_squareVec[index].distance = 0;
+				setCellColor(SquareType::START, index);
+				// Change start position
+				m_startIndex = index;
+			}
+			else if (squareType == SquareType::FINISH)
+			{
+				// Reset finish cell
+				m_squareVec[m_endIndex].cellType = SquareType::EMPTY;
+				setCellColor(SquareType::EMPTY, m_endIndex);
+				// Reset start cell
+				m_squareVec[index].cellType = SquareType::FINISH;
+				setCellColor(SquareType::FINISH, index);
+				// Change end position
+				m_endIndex = index;
+			}
+			else
+			{
+				m_squareVec[index].cellType = squareType;
+				setCellColor(squareType, index);
+			}
 		}
 	}
 }
@@ -197,6 +225,8 @@ void Mesh::copyMesh(const Mesh& mesh)
 	for (int i = 0; i < mesh.m_squareVec.size(); ++i)
 	{
 		m_squareVec[i] = mesh.m_squareVec[i];
+		m_startIndex = mesh.getStartPosition();
+		m_endIndex = mesh.getFinishPosition();
 		setCellColor(m_squareVec[i].cellType, i);
 	}
 }
@@ -214,6 +244,29 @@ void Mesh::resetMesh()
 		}
 	}
 }
+
+////////////////////////////////////////////////////////////
+void Mesh::clearMesh()
+{
+	// Set all cells to empty
+	for (int i = 0; i < m_squareVec.size(); ++i)
+	{
+		m_squareVec[i].cellType = SquareType::EMPTY;
+		m_squareVec[i].distance = std::numeric_limits<int>::max();
+		setCellColor(SquareType::EMPTY, i);
+	}
+	// Create start and finish
+	int startPoint = 0;
+	int endPoint = static_cast<int>(m_squareVec.size() - 1);
+	m_squareVec[startPoint].cellType = SquareType::START;
+	m_squareVec[startPoint].distance = 0;
+	m_squareVec[endPoint].cellType = SquareType::FINISH;
+	setCellColor(SquareType::START, startPoint);
+	setCellColor(SquareType::FINISH, endPoint);
+	m_startIndex = startPoint;
+	m_endIndex = endPoint;
+}
+
 ////////////////////////////////////////////////////////////
 void Mesh::setCellColor(SquareType sqType, int index)
 {

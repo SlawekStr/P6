@@ -33,7 +33,6 @@ enum class SolverType
 	BFS,
 	DJIKSTRA,
 	ASTAR,
-	BIDERECTIONAL
 };
 
 class MeshSolver
@@ -99,6 +98,10 @@ public:
 		m_pathWeight = 0;
 		m_iterNumber = 0;
 	}
+	/// <summary>
+	/// Reset starting position of solver
+	/// </summary>
+	virtual void resetStartPosition() = 0;
 private:
 	/// <summary>
 	/// Run another step of pathfinding visualisation

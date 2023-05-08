@@ -21,6 +21,10 @@ public:
 	/// </summary>
 	void reset() override;
 	/// <summary>
+	/// Reset starting position of solver;
+	/// </summary>
+	void resetStartPosition() override;
+	/// <summary>
 	/// Returns a string representing the name of the solver.
 	/// </summary>
 	/// <returns></returns>

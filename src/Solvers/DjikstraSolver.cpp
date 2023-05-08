@@ -10,9 +10,14 @@ DjikstraSolver::DjikstraSolver(Mesh* mesh) : MeshSolver(mesh)
 ////////////////////////////////////////////////////////////
 void DjikstraSolver::reset()
 {
+	resetStartPosition();
+	resetSolver();
+}
+
+void DjikstraSolver::resetStartPosition()
+{
 	m_cellContainer = pairPrioQueue();
 	m_cellContainer.push({ m_mesh->getStartPosition(),0 });
-	resetSolver();
 }
 
 ////////////////////////////////////////////////////////////
@@ -89,8 +94,6 @@ void DjikstraSolver::updatePath()
 	m_pathWeight += cellVec[topIndex].weight;
 
 	auto [row, column] = mapIndex2D(topIndex, meshSize.x);
-
-
 	int minDistance{ std::numeric_limits<int>::max() };
 	int cellIndex{};
 	for (int i = -1; i <= 1; i++)
