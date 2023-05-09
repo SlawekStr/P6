@@ -25,7 +25,7 @@ The Pathfinder Visualization project is an interactive tool that provides a visu
 |**Escape**|Close window|  
 |**P**|Turn On/Off pause|  
 |**C**|Copy Cells from scratchpad|  
-|**M**|Switch between drawing walls/modifying weights|  
+|**M**|Switch mode between drawing walls/modifying weights|  
 |**S**|Spawn Start point|  
 |**E**|Spawn End point|
 |**G**|Generate maze on scratchpad|
