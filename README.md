@@ -34,3 +34,12 @@ The Pathfinder Visualization project is an interactive tool that provides a visu
 |**MOUSE LEFT**|Spawn wall/ Increase cell weight (depend on mode)|
 |**MOUSE RIGHT**|Despawn wall/ Decrease cell weight (depend on mode)|
 
+# Maze Generation
+
+![MazeGenerator](https://github.com/SlawekStr/PathfinderVisualisation/blob/master/Img/MazeGeneration.gif)
+
+
+# Solvers
+
+![MazeSolver](https://github.com/SlawekStr/PathfinderVisualisation/blob/master/Img/MazeSolver.gif)
+
