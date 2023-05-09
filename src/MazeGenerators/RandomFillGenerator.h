@@ -25,5 +25,5 @@ private:
 	// Other
 	int m_currentIndex{};									//!< Currently processed cell
 	bool m_isFinished{ false };								//!< Is generation finished 
-	const float WALL_PROBABILITY = 0.53f;					//!< Probability of filling cell with wall
+	const float WALL_PROBABILITY = 0.33f;					//!< Probability of filling cell with wall
 };

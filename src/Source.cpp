@@ -1,4 +1,6 @@
 #include "MovingWindow.h"
+#include <tuple>
+#include <iostream>
 
 int main()
 {

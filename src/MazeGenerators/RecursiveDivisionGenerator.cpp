@@ -3,15 +3,41 @@
 
 ////////////////////////////////////////////////////////////
 RecursiveDivisionGenerator::RecursiveDivisionGenerator(Mesh* mesh) : MazeGenerator(mesh), m_generator(std::random_device()())
-{}
+{
+    sf::Vector2i mazeSize = m_mesh->getMeshSize();
+    divideMaze(0, 0, mazeSize.x, mazeSize.y, getOrientation(mazeSize.x, mazeSize.y));
+}
 
 ////////////////////////////////////////////////////////////
 void RecursiveDivisionGenerator::updateGenerator()
 {
     if (!m_isFinished)
     {
-        sf::Vector2i mazeSize = m_mesh->getMeshSize();
-        divideMaze(0, 0, mazeSize.x, mazeSize.y, getOrientation(mazeSize.x, mazeSize.y));
+        // Check if there are walls to draw
+        if (!m_wallIndexes.empty())
+        {
+            std::vector<Cell>& cellVec = m_mesh->getSquareVec();      
+            // Create new wall
+            int wallIndex = m_wallIndexes.front();
+            cellVec[wallIndex].cellType = SquareType::FULL;
+            m_mesh->setCellColor(SquareType::FULL, wallIndex);
+            // Remove wall index
+            m_wallIndexes.pop();
+            return;
+        }
+        // Check if there are another segments to process
+        else if (!m_divisionSegments.empty())
+        {
+            auto newSegment = m_divisionSegments.front();
+            // Process new maze segment
+            divideMaze(std::get<0>(newSegment), std::get<1>(newSegment), std::get<2>(newSegment), std::get<3>(newSegment), std::get<4>(newSegment));
+            m_divisionSegments.pop();
+            return;
+        }
+        else
+        {
+            m_isFinished = true;
+        }
     }
 }
 
@@ -51,8 +77,7 @@ void RecursiveDivisionGenerator::divideMaze(int x, int y, int sectionWidth, int 
     {
         if (cellX != openingX || cellY != openingY)
         {
-            cellVec[cellY * mazeSize.x + cellX].cellType = SquareType::FULL;
-            m_mesh->setCellColor(SquareType::FULL, cellY * mazeSize.x + cellX);
+            m_wallIndexes.push(cellY * mazeSize.x + cellX);
         }
         cellX += directionX;
         cellY += directionY;
@@ -61,7 +86,7 @@ void RecursiveDivisionGenerator::divideMaze(int x, int y, int sectionWidth, int 
     int subWidth = horizontal ? sectionWidth : wallX - x;
     int subHeight = horizontal ? wallY - y + 1 : sectionHeight;
 
-    divideMaze(x, y, subWidth, subHeight, getOrientation(subWidth, subHeight));
+    m_divisionSegments.push(std::make_tuple(x, y, subWidth, subHeight, getOrientation(subWidth, subHeight)));
     
     int subX = horizontal ? x : wallX;
     int subY = horizontal ? wallY : y;
@@ -69,9 +94,7 @@ void RecursiveDivisionGenerator::divideMaze(int x, int y, int sectionWidth, int 
     subWidth = horizontal ? sectionWidth : x + sectionWidth - wallX;
     subHeight = horizontal ? y + sectionHeight - wallY : sectionHeight;
 
-    divideMaze(subX, subY, subWidth, subHeight, getOrientation(subWidth, subHeight));
-    
-    m_isFinished = true;
+    m_divisionSegments.push(std::make_tuple(subX, subY, subWidth, subHeight, getOrientation(subWidth, subHeight)));
 }
 
 ////////////////////////////////////////////////////////////
